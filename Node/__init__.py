@@ -1,3 +1,7 @@
+#Nodos
+#it contains all the production items and the 
+#previous nodes needed to be available for the production
+
 class Node:
     def __init__(self, name, time, maxWorkers, work, fastStartDate,type_):
         self.time=time #time spent in hours

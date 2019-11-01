@@ -1,6 +1,8 @@
 from Node.__init__ import Node
 from NodeMap.__init__ import NodeMap
 from graphviz import Digraph
+from WorkPlace import possibleWork
+from WorkPlace.__init__ import WorkPlace
 
 import random
 import math
@@ -11,6 +13,9 @@ def expRandom(max_):
 def createName(level,num):
     return str(level)+"-"+str(num)
 
+
+#
+#create Randoms Node Map, with conexion between them
 def createMap():
     MIN_LEVEL_NODOS = 5
     MAX_LEVEL_NODOS = 20
@@ -24,7 +29,7 @@ def createMap():
     
     
     #create Random Nodes.
-    possibleWork = ["a","b","c","d"]
+    
     numberNodes = random.randrange(MIN_NODES_NUMBER, MAX_NODES_NUMBER, 1);
     maxNumberLevels = random.randrange(MIN_LEVEL_NODOS, MAX_LEVEL_NODOS, 1);
     # print ("Nodos:" + str(numberNodes))
@@ -60,7 +65,7 @@ def createMap():
                 mapaNodos[key][key2].setNext(lastNode[name])
     mapaNodos[level] = lastNode   
     #imprimimos 
-    ''''g = Digraph('G', filename='hello.gv')       
+    g = Digraph('G', filename='hello.gv')       
     for key in mapaNodos:
         print(str(key)+"--------")
         for key2 in  mapaNodos[key] :
@@ -77,5 +82,33 @@ def createMap():
             for key3 in mapaNodos[key][key2].prev: 
                 print("    "+key3)     
     
-    g.view()'''
+    g.view()
     return mapaNodos
+
+
+
+
+
+#create random WorkPlaces for the production Line
+def createWorkPlaces():
+    MAX_NUMBERS_WP = 50
+    MAX_TIME_INITIAL_TIME = 0.5
+    MAX_TIME_CHANGE_TIME = 0.5
+    MIN_EFFICIENCI = 0.5
+    MAX_EFFICIENCI = 0.8
+    
+    workPlacesMap = []
+    for wp in possibleWork:
+        NumberOfWP = random.randrange(1,MAX_NUMBERS_WP,1)        
+        for a in range(NumberOfWP):
+            possibleChanges=random.randrange(0,2,1)
+            wps = [wp]
+            for i in range(possibleChanges):
+                new = random.choice(possibleWork)
+                if not(new in wps):
+                    wps.append(new)
+            itime = round(random.uniform(0,MAX_TIME_INITIAL_TIME),2)
+            ctime = round(random.uniform(0,MAX_TIME_CHANGE_TIME),2)
+            ef = round(random.uniform(MIN_EFFICIENCI,MAX_EFFICIENCI),2)
+            workPlacesMap.append(WorkPlace( wp+"-"+str(a),"NA",wps,itime,ctime,ef))
+    return  workPlacesMap  
