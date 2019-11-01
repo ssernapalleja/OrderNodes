@@ -12,3 +12,17 @@ class WorkPlace:
         self.initialTime = initialTime #time spent before starting a production
         self.changeTime = changeTime #time used to change the work
         self.efficiency = efficiency
+        self.nod_wp = []
+
+#verifica que no se cruce con otros existentes        
+    def isAvailable(self,startTime,endTime):
+        valid = True
+        for nwp in self.nod_wp:
+            if (startTime >= nwp.startDate and startTime <= nwp.endDate) or (endTime >= nwp.startDate and endTime <= nwp.endDate) :
+                valid = False
+                break
+            elif startTime <= nwp.startDate and endTime >= nwp.endDate:
+                valid = False
+                break
+        return valid
+            

@@ -11,4 +11,4 @@ import random
 import math
 from _operator import not_
 
-createWorkPlaces()
+availableNodes = 
