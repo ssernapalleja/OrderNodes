@@ -13,7 +13,7 @@ import math
 class Node_WorkPlace:
     def __init__(self,_workPlace,_node,_startTime):
         self.endDate = self.startDate + _node.time/_workPlace.efficiency +_workPlace.initialTime
-        self.available = _workPlace.isAvailable(_startTime,self.endDate) and _node.isAvailable()
+        self.available = _workPlace.isAvailable(_startTime,self.endDate) and _node.isAvailable() and _node.work in _workPlace.work 
         if self.available:
             self.workPlace = _workPlace
             _workPlace.nod_wp.append(self)

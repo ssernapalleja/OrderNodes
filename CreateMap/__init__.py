@@ -65,7 +65,7 @@ def createMap():
                 mapaNodos[key][key2].setNext(lastNode[name])
     mapaNodos[level] = lastNode   
     #imprimimos 
-    g = Digraph('G', filename='hello.gv')       
+    ''''g = Digraph('G', filename='hello.gv')       
     for key in mapaNodos:
         print(str(key)+"--------")
         for key2 in  mapaNodos[key] :
@@ -82,7 +82,7 @@ def createMap():
             for key3 in mapaNodos[key][key2].prev: 
                 print("    "+key3)     
     
-    g.view()
+    g.view()'''
     return mapaNodos
 
 
