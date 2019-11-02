@@ -26,11 +26,14 @@ class Node:
     #check if all the previous nodes are already placed, and if they're already finished
     def isAvailable(self,startDate):
         available = True
-        for nd in self.prev:
-            if not nd.isPlaced:
-                available = False
-                break
-            if nd.nod_wp.endDate <= startDate:
-                available = False
-                break
+        if self.isPlaced ==True:
+            available = False
+        else:
+            for k,nd in self.prev.items():
+                if not nd.isPlaced:
+                    available = False
+                    break
+                if nd.nod_wp.endDate <= startDate:
+                    available = False
+                    break
         return available
