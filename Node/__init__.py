@@ -33,7 +33,7 @@ class Node:
                 if not nd.isPlaced:
                     available = False
                     break
-                if nd.nod_wp.endDate <= startDate:
+                if nd.nod_wp.endDate >= startDate:
                     available = False
                     break
         return available

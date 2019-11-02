@@ -13,11 +13,12 @@ import math
 
 
 
-NUMBERS_OF_PRODUCTS = 30
+NUMBERS_OF_PRODUCTS = 200
 
 
 
 #Create Diagrams of process
+
 proMaps=[]
 for i in range(NUMBERS_OF_PRODUCTS):
     proMaps.append(createMap())
@@ -26,10 +27,13 @@ for i in range(NUMBERS_OF_PRODUCTS):
 workPMap = createWorkPlaces()
 
 #Select Posible Initial nodes
+
+total = 0
 posibleInitial = []
 for pro in proMaps:
     for key in pro:
         for keyNode in pro[key]:
+            total +=1
             if len(pro[key][keyNode].prev) == 0:
                 posibleInitial.append(pro[key][keyNode])
             
@@ -47,13 +51,21 @@ for i in workPMap:
         dictWP[a].append(i)
 
 
-
+contador = 0
 while(len(posibleInitial)>0):
-    print(len(posibleInitial))
-    node = posibleInitial[0]
+    print(str(len(posibleInitial)) + "  "+str(contador)+" de "+str(total))
+    node = posibleInitial[random.randrange(len(posibleInitial))]
     posibleWP = dictWP[node.work]
-    date = int(input("ingresa hora"))
-    wp = int(input("ingresa en cual puesto de trabajo de "+str(len(posibleWP))))
+    #date = int(input("ingresa hora"))
+    #wp = int(input("ingresa en cual puesto de trabajo de "+str(len(posibleWP))))
+    wp = random.randrange(len(posibleWP))
+    listaFechas = [x.endDate for x in posibleWP[wp].nod_wp]
+    date = 0
+    if len(listaFechas)>0:
+        date = max( listaFechas   )+0.1 #encontrar el mas grande de todos
+    for k, prevN in node.prev.items():
+        date = max([prevN.nod_wp.endDate+0.1, date])
+        
     new = Node_WorkPlace(posibleWP[wp],node,date)
     try:
         if new.available:
@@ -69,10 +81,13 @@ while(len(posibleInitial)>0):
                         posibleInitial.append(next_)
                 #remove new one
             posibleInitial.remove(node)
+            contador +=1
         else :
             print("valores no permitidos")  
+            wp = int(input("xxxxxxx "+str(len(posibleWP))))
     except:     
-        print("error 420")      
+        print("error 420")   
+        wp = int(input("xxxxxxx "+str(len(posibleWP))))   
 
 #add to the time places
     #check if it available
