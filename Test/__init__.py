@@ -55,25 +55,26 @@ while(len(posibleInitial)>0):
     date = int(input("ingresa hora"))
     wp = int(input("ingresa en cual puesto de trabajo de "+str(len(posibleWP))))
     new = Node_WorkPlace(posibleWP[wp],node,date)
-   # try:
-    if new.available:
-        #update new initial nodes
-        for k,next_ in node.next.items():
-            addNew = True;
-            if not( next_ in posibleInitial): # don't have already added to the initial
-                for k2,prev in next_.prev.items():
-                    if(prev.isPlaced == False):
-                        addNew = False
-                        break
-                if addNew:
-                    posibleInitial.append(next_)
-            #remove new one
-        posibleInitial.remove(node)
-    else :
-        print("valores no permitidos")  
-    #except:     
-    #    print("error 420")      
+    try:
+        if new.available:
+            #update new initial nodes
+            for k,next_ in node.next.items():
+                addNew = True;
+                if not( next_ in posibleInitial): # don't have already added to the initial
+                    for k2,prev in next_.prev.items():
+                        if(prev.isPlaced == False):
+                            addNew = False
+                            break
+                    if addNew:
+                        posibleInitial.append(next_)
+                #remove new one
+            posibleInitial.remove(node)
+        else :
+            print("valores no permitidos")  
+    except:     
+        print("error 420")      
 
 #add to the time places
     #check if it available
     #update new initial nodes
+    
