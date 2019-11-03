@@ -16,7 +16,7 @@ def createName(level,num):
 
 #
 #create Randoms Node Map, with conexion between them
-def createMap():
+def createMap(nameMap):
     MIN_LEVEL_NODOS = 5
     MAX_LEVEL_NODOS = 20
     
@@ -83,7 +83,13 @@ def createMap():
                 print("    "+key3)     
     
     g.view()'''
-    return mapaNodos
+    
+    nodes = {}
+    for k,group in mapaNodos.items():
+        for k2,n in group.items():
+            nodes[k2]=n
+    map_ = NodeMap(nameMap,random.randrange(1, 3,1),random.randrange(500, 10000,10),nodes)
+    return map_
 
 
 

@@ -4,6 +4,7 @@ from CreateMap.__init__ import createMap
 from CreateMap.__init__ import createWorkPlaces
 from WorkPlace.__init__ import WorkPlace
 from Node_WorkPlace.__init__ import Node_WorkPlace
+import graphviz
 from graphviz import Digraph
 from WorkPlace.__init__ import possibleWork
 
@@ -11,9 +12,18 @@ from WorkPlace.__init__ import possibleWork
 import random
 import math
 
+COLOURS = {}
+colorValues = {0:"ef",1:"aa",2:"05",3:"10"}
+colorCount = 0;
+for a in range(4):
+    for b in range(4):
+        for c in range(4):
+            COLOURS[str(colorCount)]= "#"+colorValues[a]+colorValues[b]+colorValues[c]
+            colorCount+=1
 
 
-NUMBERS_OF_PRODUCTS = 200
+
+NUMBERS_OF_PRODUCTS = 63
 
 
 
@@ -21,7 +31,7 @@ NUMBERS_OF_PRODUCTS = 200
 
 proMaps=[]
 for i in range(NUMBERS_OF_PRODUCTS):
-    proMaps.append(createMap())
+    proMaps.append(createMap(str(i)))
 
 #Create Workplace
 workPMap = createWorkPlaces()
@@ -31,11 +41,10 @@ workPMap = createWorkPlaces()
 total = 0
 posibleInitial = []
 for pro in proMaps:
-    for key in pro:
-        for keyNode in pro[key]:
-            total +=1
-            if len(pro[key][keyNode].prev) == 0:
-                posibleInitial.append(pro[key][keyNode])
+    for key,node in pro.nodes.items():
+        total +=1
+        if len(node.prev) == 0:
+            posibleInitial.append(node)
             
 print(len(posibleInitial))
 print(len(proMaps))
@@ -89,7 +98,33 @@ while(len(posibleInitial)>0):
         print("error 420")   
         wp = int(input("xxxxxxx "+str(len(posibleWP))))   
 
-#add to the time places
-    #check if it available
-    #update new initial nodes
-    
+
+
+
+#Print:
+g = Digraph('G', engine="neato", filename='test.gv',format='pdf')
+g.attr(size='7')
+#workPMap
+cont = 0
+for wp in workPMap:
+    g.node(wp.name,pos='-1,'+str(cont)+'!', color="#ff0000",shape="box",width="1")
+    for nd in wp.nod_wp:
+        largo = nd.endDate-nd.startDate
+        posi = str(nd.startDate+largo/2)+','+str(cont)+'!'   
+        nombre = nd.node.mapper.name+"  "+nd.node.name
+        g.node(nombre,pos=posi, color=COLOURS[str(nd.node.mapper.name)],shape="box",width=str(largo))        
+    cont+=1
+
+
+#for wp in workPMap:
+#    for nd in wp.nod_wp:
+#        for k,nx in nd.node.next.items() :
+#            g.edge(nd.node.mapper.name+"  "+nd.node.name,nx.mapper.name+"  "+nx.name)
+         
+
+g.render()
+g.view()
+
+
+
+

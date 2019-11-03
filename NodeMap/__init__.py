@@ -11,4 +11,6 @@ class NodeMap:
         self.importance = importance
         self.endDate=endDate
         self.nodes = nodes
+        for k,n in nodes.items():
+            n.mapper = self
     
