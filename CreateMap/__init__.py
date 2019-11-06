@@ -6,6 +6,8 @@ from WorkPlace.__init__ import WorkPlace
 
 import random
 import math
+import pickle
+
 
 def expRandom(max_):
     val = random.uniform(0, math.log(max_))
@@ -17,11 +19,11 @@ def createName(level,num):
 #
 #create Randoms Node Map, with conexion between them
 def createMap(nameMap):
-    MIN_LEVEL_NODOS = 5
-    MAX_LEVEL_NODOS = 20
+    MIN_LEVEL_NODOS = 5 #nodos por nivel generico
+    MAX_LEVEL_NODOS = 10
     
     MIN_NODES_NUMBER = 25
-    MAX_NODES_NUMBER = 100
+    MAX_NODES_NUMBER = 50 #"numero total de nodos"
     
     MAX_NUMBER_WORKERS = 3
     MAX_TIME=20
@@ -88,16 +90,24 @@ def createMap(nameMap):
     for k,group in mapaNodos.items():
         for k2,n in group.items():
             nodes[k2]=n
-    map_ = NodeMap(nameMap,random.randrange(1, 3,1),random.randrange(500, 10000,10),nodes)
+    map_ = NodeMap(nameMap,random.randrange(1, 3,1),random.randrange(200, 3000,10),nodes)
     return map_
 
 
+def saveMaps(data,name):
+    # Step 2
+    with open("saved//"+name+'.pkl', 'wb') as output:
+        pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
 
 
+
+def loadMaps(name):
+    with open("saved//"+name+'.pkl', 'rb') as config_dictionary_file:
+        config_dictionary = pickle.load(config_dictionary_file)
+    return config_dictionary
 
 #create random WorkPlaces for the production Line
-def createWorkPlaces():
-    MAX_NUMBERS_WP = 50
+def createWorkPlaces(MAX_NUMBERS_WP):
     MAX_TIME_INITIAL_TIME = 0.5
     MAX_TIME_CHANGE_TIME = 0.5
     MIN_EFFICIENCI = 0.5
