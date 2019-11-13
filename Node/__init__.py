@@ -14,6 +14,7 @@ class Node:
         self.fastStartDate = fastStartDate
         self.type=type_ #if you have something that could by worked differently
         self.isPlaced = False
+        self.id = 0 #
         
     def setNext(self,_next):
         self.next[_next.name]=_next
