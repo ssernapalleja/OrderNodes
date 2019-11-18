@@ -53,8 +53,8 @@ class Model:
             )
         
        
-        self.checkpoint_path_wp = "training_2/wpcp-{epoch:04d}.ckpt"
-        self.checkpoint_path_nodes = "training_2/nodescp-{epoch:04d}.ckpt"
+        self.checkpoint_path_wp = "training_2_wp/cp-{epoch:04d}.ckpt"
+        self.checkpoint_path_nodes = "training_2_nodes/cp-{epoch:04d}.ckpt"
         
         self.checkpoint_dir_wp = os.path.dirname(self.checkpoint_path_wp)
         self.checkpoint_dir_nodes = os.path.dirname(self.checkpoint_path_nodes)
@@ -64,16 +64,16 @@ class Model:
     filepath=self.checkpoint_path_wp, 
     verbose=1, 
     save_weights_only=True,
-    save_freq=30)
+    save_freq=100)
         
         self.cp_callback_nodes = tf.keras.callbacks.ModelCheckpoint(
     filepath=self.checkpoint_path_nodes, 
     verbose=1, 
     save_weights_only=True,
-    save_freq=30)
+    save_freq=100)
         
-    # self.model_nodos.load_weights(tf.train.latest_checkpoint(self.checkpoint_dir))
-    # self.model_wp.load_weights(tf.train.latest_checkpoint(self.checkpoint_dir))
+        #self.model_nodos.load_weights(tf.train.latest_checkpoint(self.checkpoint_dir_nodes))
+        #self.model_wp.load_weights(tf.train.latest_checkpoint(self.checkpoint_dir_wp))
 
     #def _define_model(self):
         ##self._states = tf.placeholder(shape=[None, self._num_states], dtype=tf.float32)
@@ -179,7 +179,8 @@ class GameRunner:
             self._steps += 1
             self._eps = MIN_EPSILON + (MAX_EPSILON - MIN_EPSILON) \
                                       * math.exp(-LAMBDA * self._steps)
-
+            print( "eps: "+str(self._eps)+ " st:  "+str(self._steps))
+            print("reward: " + str(reward))
             # move the agent to the next state and accumulate the reward
             state_nodo=next_state_nodo
             state_wp= next_state_wp
