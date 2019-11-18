@@ -1,17 +1,18 @@
 import numpy as np
 from CreateMap import loadMaps
 from WorkPlace import possibleWork
-from Node_WorkPlace.__init__ import Node_WorkPlace
+from Node_WorkPlace import Node_WorkPlace
+
 
 class environment:
     def __init__(self):
         self.totalMapas = 200;
-        self.maxNodos = 200;
-        self.maxWP = 10
+        self.maxNodos = 200*5;
+        self.maxWP = 15
         self.aCargar = -1;
         
-        self.states_nodos = self.maxNodos*10
-        self.states_wp = 4*self.maxWP
+        self.states_nodos = (self.maxNodos+1)*10
+        self.states_wp = 6*self.maxWP
         
     
     def cargarMapaAleatorio(self, nuevo = False):
@@ -27,62 +28,87 @@ class environment:
        
     def reiniciar(self):
         self.cargarMapaAleatorio(True)
+        return self.arregloNodos, self.arregloWP
         
     def _mapToArray(self):
         
-        self.arregloWP = []
-        self.arregloNodos = []
-        contador = 1
+        self.arregloWP = [0] * self.states_wp 
+        self.arregloNodos = [0] * self.states_nodos
+        contador = 0
 
-        
+        max_id = 0
         
         
         for _map in self.nodMaps:
-            for _key,nod in map.nodes.items():
-                contador += 1
-                if nod.id == 0:
+            for _key,nod in _map.nodes.items():
+                
+                if not hasattr(nod,'id'):
+                    contador += 1
                     nod.id = contador
-                self.arreglosNodos.append(nod.id) #0 nombre
+                    #max_id = max(contador,max_id )
+                elif nod.id == 0:
+                    contador += 1
+                    nod.id = contador
+                    #max_id = max(contador,max_id )
+                self.arregloNodos[nod.id*10]=(nod.id) #0 nombre
                 if nod in self.posibles :    
-                    self.arregloNodos.append(1) #1 si es posible
+                    self.arregloNodos[nod.id*10+1]=(1) #1 si es posible
                 else :
-                    self.arregloNodos.append(0)
-                self.arregloNodos.append(nod.time*1000/self.norm_time) #2 tiempo de produccion
-                self.arregloNodos.append(_map.endDate) #3 fecha final
-                self.arregloNodos.append(_map.importancia) #4 importancia
-                self.arregloNodos.append(possibleWork.index(nod.work)) #5 donde puede ir
-                self.arregloNodos.append(0) #6 endDate
+                    self.arregloNodos[nod.id*10+1]=(0)
+                self.arregloNodos[nod.id*10+2]=(nod.time*1000/self.norm_time) #2 tiempo de produccion
+                self.arregloNodos[nod.id*10+3]=(_map.endDate) #3 fecha final
+                self.arregloNodos[nod.id*10+4]=(_map.importance) #4 importancia
+                self.arregloNodos[nod.id*10+5]=(possibleWork.index(nod.work)) #5 donde puede ir
+                self.arregloNodos[nod.id*10+6]=(0) #6 endDate
                 cont = 0
-                for _k,pr in nod.prev: #7 8 9 previos
+                for pr in nod.prev.values(): #7 8 9 previos
                     cont += 1
-                    self.arregloNodos.append(pr)
+                    if not hasattr(pr,'id'):
+                        contador += 1
+                        pr.id = contador
+                    elif pr.id == 0:
+                        contador += 1
+                        pr.id = contador
+                        #max_id = max(pr.id,max_id )
+                    self.arregloNodos[nod.id*10+6+cont]=(pr.id)
+                    if(cont == 3):
+                        break
                 if cont < 3:
-                    for _ in range(cont,3):
-                        self.arregloNodos.append(-1)
+                    for _r in range(cont,3):
+                        self.arregloNodos[nod.id*10+6+_r+1]=(-1)
                 
         
-        id_wp = 0 
+        id_wp = -1 
         for wp in self.workPMap: #previos
             id_wp +=1
             wp.id = id_wp
             cont = 0
-            self.arregloWP(0) #0 agrega el tiempo inicial
+            self.arregloWP[wp.id*6]=0
             for i in wp.work:
                 cont += 1
-                self.arregloWP.append(possibleWork.index(i))
+                self.arregloWP[wp.id*6 + cont] = possibleWork.index(i)
             if cont < 5:
-                for _ in range(cont,5):
-                    self.arregloWP.append(-1)
+                for _k in range(cont,5):
+                    self.arregloWP[wp.id*6 + _k + 1] = -1
+                    
                 
-    def select_random(self,state) : #selecciona un nodo aleatorio, y una ubicacion posible de forma aleatoria, con una probabilidad del 50 % que no sea correcta
-        hola = 0
+    def select_random(self) : #selecciona un nodo aleatorio, y una ubicacion posible de forma aleatoria, con una probabilidad del 50 % que no sea correcta
+        a = np.random.choice(self.posibles) 
         
+        b = np.random.randint(len(self.workPMap)-1)
+        while not ( a.work in  self.workPMap[b].work):
+            b = (b+1)%len(self.workPMap)
+        return a.id, b
+                
 
         
     def step(self,action_node,action_workPlace):
-        node_id = self.posibles.index(lambda x: x.id==action_node)
-        workplace_id = self.workPMap.index(lambda x: x.id==action_workPlace)
-        node = self.posibles[node_id]
+       
+       #node_id = self.posibles.index( )
+        
+        
+        workplace_id = action_workPlace
+        node = next(filter(lambda x: x.id == action_node,  self.posibles))
         workplace = self.workPMap[workplace_id]
 
 
@@ -134,15 +160,17 @@ class environment:
     def calcularGanancia(self):
         total = 0.0
         for map in self.nodMaps:
-            nodes_val = map.nodes.itervalues()
-            if all(nodes_val.isPlaced):
-                lastProduccion = max(nodes_val.nod_wp.endDate)
-                total += (min(nodes_val.nod_wp.StartDate)-lastProduccion)/self.norm_time
+            nodes_val = list(map.nodes.values())
+            if all(x.isPlaced for x in nodes_val):
+                lastProduccion = max(x.nod_wp.endDate for x in nodes_val)
+                total += (min( x.npd_wp.StartDate for x in nodes_val)-lastProduccion)/self.norm_time
                 if(lastProduccion < map.endDate):
                     total += 100 - ((map.endDate - lastProduccion)/8*15 )
                 else:                              
                     total += - ((map.endDate - lastProduccion)/8*50*(map.importance+1))
-    
+        #print(total)
+        #if total != 0:
+        #    print(total)
         return max([-500,total])
     
     def _start_posibles(self):
